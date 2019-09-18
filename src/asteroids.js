@@ -1,3 +1,5 @@
+import update from './engine.js';
+
 var canvas = document.getElementById('canvas')
 var ctx = canvas.getContext('2d')
 
@@ -92,30 +94,20 @@ var state = [
     {id: 4, asteroid: true, pos: {x: rnd(world.w), y: rnd(world.h)}, vel: {x: rnd(-10, 10), y: rnd(-10, 10)}}
 ]
 
-function physics(state, dt) {
-    state.forEach(e => {
-            e.pos.x += e.vel.x * dt
-            e.pos.y += e.vel.y * dt
-        }
-    )
-}
-
-function update(controls, state) {
-    if (controls.left) {
-        state[0].pos.x -= 2
-    }
-    if (controls.right) {
-        state[0].pos.x += 1
-    }
-}
-
 function loop() {
     var dt = 1 / 60
-    update(controls, state)
-    physics(state, dt)
+    update(controls, state, dt)
     clear()
     draw(state)
     drawWorld(world)
 }
 
-setInterval(loop, 1 / 60 * 1000)
+var interval = setInterval(loop, 1 / 60 * 1000)
+
+if (module.hot) {
+  console.log('Setting up HMR!');
+  module.hot.accept('./engine.js', function() {
+    clearInterval(interval)
+    interval = setInterval(loop, 1 / 60 * 1000)
+  })
+}
