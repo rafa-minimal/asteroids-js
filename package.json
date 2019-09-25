@@ -17,5 +17,8 @@
     "webpack": "^4.39.2",
     "webpack-cli": "^3.3.7",
     "webpack-dev-server": "^3.8.1"
+  },
+  "dependencies": {
+    "planck-js": "^0.3.10"
   }
 }
