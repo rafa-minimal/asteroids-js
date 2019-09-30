@@ -1,7 +1,9 @@
 import Scheduler from './Scheduler.js';
 import createAsteroid from './asteroid.js';
 import createRocket from './rocket.js';
+import createBullet from './bullet.js';
 import { rnd } from './math.js';
+import { cat } from './constants.js';
 
 planck.testbed('Asteroids', function(testbed) {
 
@@ -26,11 +28,6 @@ planck.testbed('Asteroids', function(testbed) {
         rocket: null,
         worldTimeMs: 0
     };
-
-    const asteroidCat = 0b00001;
-    const rocketCat =   0b00010;
-    const bulletCat =   0b00100;
-    const edgeCat =     0b01000;
 
 
     const EDGE_FORCE_FACTOR = 0.4;
@@ -68,8 +65,8 @@ planck.testbed('Asteroids', function(testbed) {
     const edge = world.createBody();
     edge.createFixture(pl.Circle(worldRadius), {
         isSensor: true,
-        filterCategoryBits: edgeCat,
-        filterMaskBits: rocketCat | asteroidCat
+        filterCategoryBits: cat.edge,
+        filterMaskBits: cat.rocket | cat.asteroid
     });
     function applyEdgeForce() {
         for (let body = world.getBodyList(); body; body = body.getNext()) {
@@ -87,35 +84,6 @@ planck.testbed('Asteroids', function(testbed) {
                     body.setLinearDamping((outside > 0) && 1.0 || DEFAULT_ROCKET_LINEAR_DAMPING)
                 }
             }
-        }
-    }
-
-    // bullets
-    function createBullet(pos, vel) {
-        const bullet = world.createDynamicBody({
-            position: pos,
-            linearVelocity: vel,
-            fixedRotation: true
-        });
-        bullet.createFixture(pl.Circle(0.1), {
-            density: 2,
-            restitution: 1,
-            filterCategoryBits: bulletCat,
-            filterMaskBits: asteroidCat
-        });
-        bullet.bullet = true;
-        bullet.deadTimeMs = ctx.worldTimeMs + 5000;
-        bullet.beginContact = (contact, self, other) => {
-            if (other.energy) {
-                other.energy -= 10;
-                if (other.energy <= 0) {
-                    ctx.toDestroy.push(other);
-                }
-            }
-            ctx.toDestroy.push(self);
-        };
-        bullet.beforeDestroy = (self) => {
-            // todo: emit particles
         }
     }
 
@@ -161,7 +129,7 @@ planck.testbed('Asteroids', function(testbed) {
             if (testbed.activeKeys.fire && ctx.worldTimeMs >= rocket.nextBullet) {
                 const pos = rocket.getWorldPoint(Vec2(0, 1.52));
                 const vel = rocket.getWorldVector(Vec2(0, ROCKET_BULLET_VELOCITY));
-                createBullet(pos, vel);
+                createBullet(ctx, pos, vel);
                 rocket.nextBullet = ctx.worldTimeMs + 200
             }
         }
