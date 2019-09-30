@@ -1,8 +1,19 @@
 import * as planck from 'planck-js';
 import { cat } from './constants.js';
+import createBullet from "./bullet";
 
 const DEFAULT_ROCKET_LINEAR_DAMPING = 0.2;
+const ROCKET_BULLET_VELOCITY = 25;
+const ROCKET_THRUST = 5.0;
 const Vec2 = planck.Vec2;
+
+/* The time [sec] after which angular velocity reaches 64% of max value */
+const angularTau = 0.11;
+/** Max angular velocity of rocket rad/s */
+const maxAngularVel = 4.5;
+
+const nominalAngDamping = 1.0/angularTau;
+var maxTorque = 0;
 
 export default function createRocket(ctx) {
     const rocket = ctx.world.createDynamicBody({dynamicDamping: DEFAULT_ROCKET_LINEAR_DAMPING});
@@ -24,6 +35,8 @@ export default function createRocket(ctx) {
     massData.center.setZero();
     rocket.setMassData(massData);
 
+    maxTorque = maxAngularVel * nominalAngDamping * rocket.getInertia();
+
     rocket.rocket = true;
     rocket.nextBullet = 0;
     rocket.energy = 10;
@@ -44,6 +57,27 @@ export default function createRocket(ctx) {
         // todo: czas dziwnie szybko upływa
         ctx.scheduler.schedule(ctx.worldTimeMs + 5000, () => ctx.world.destroyBody(securityCircle));
         ctx.scheduler.schedule(ctx.worldTimeMs + 5000, () => createRocket(ctx))
+    };
+    rocket.update = (self, activeKeys) => {
+        if (activeKeys.right && !activeKeys.left) {
+            self.setAngularDamping(nominalAngDamping);
+            self.applyTorque(-maxTorque, true);
+        } else if (activeKeys.left && !activeKeys.right) {
+            self.setAngularDamping(nominalAngDamping);
+            self.applyTorque(maxTorque, true);
+        } else {
+            self.setAngularDamping(nominalAngDamping * 3);
+        }
+        if (activeKeys.up) {
+            const force = self.getWorldVector(Vec2(0, ROCKET_THRUST));
+            self.applyForceToCenter(force, true);
+        }
+        if (activeKeys.fire && ctx.worldTimeMs >= self.nextBullet) {
+            const pos = self.getWorldPoint(Vec2(0, 1.52));
+            const vel = self.getWorldVector(Vec2(0, ROCKET_BULLET_VELOCITY));
+            createBullet(ctx, pos, vel);
+            self.nextBullet = ctx.worldTimeMs + 200
+        }
     };
     ctx.rocket = rocket;
 }

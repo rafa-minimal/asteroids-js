@@ -32,20 +32,11 @@ planck.testbed('Asteroids', function(testbed) {
 
     const EDGE_FORCE_FACTOR = 0.4;
 
-    const ROCKET_BULLET_VELOCITY = 25;
-    const ROCKET_THRUST = 5.0;
+
     const DEFAULT_ROCKET_LINEAR_DAMPING = 0.2;
 
     // rocket
     createRocket(ctx);
-
-    /* The time [sec] after which angular velocity reaches 64% of max value */
-    const angularTau = 0.11;
-    /** Max angular velocity of rocket rad/s */
-    const maxAngularVel = 4.5;
-
-    const nominalAngDamping = 1.0/angularTau;
-    const maxTorque = maxAngularVel * nominalAngDamping * ctx.rocket.getInertia();
 
     // Create asteroids, init spawn chain
     for (let i = 0; i < 10; i++) {
@@ -112,26 +103,7 @@ planck.testbed('Asteroids', function(testbed) {
     testbed.step = function(dt) {
         ctx.worldTimeMs += dt;
         if (ctx.rocket) {
-            const rocket = ctx.rocket;
-            if (testbed.activeKeys.right && !testbed.activeKeys.left) {
-                rocket.setAngularDamping(nominalAngDamping);
-                rocket.applyTorque(-maxTorque, true);
-            } else if (testbed.activeKeys.left && !testbed.activeKeys.right) {
-                rocket.setAngularDamping(nominalAngDamping);
-                rocket.applyTorque(maxTorque, true);
-            } else {
-                rocket.setAngularDamping(nominalAngDamping * 3);
-            }
-            if (testbed.activeKeys.up) {
-                const force = rocket.getWorldVector(Vec2(0, ROCKET_THRUST));
-                rocket.applyForceToCenter(force, true);
-            }
-            if (testbed.activeKeys.fire && ctx.worldTimeMs >= rocket.nextBullet) {
-                const pos = rocket.getWorldPoint(Vec2(0, 1.52));
-                const vel = rocket.getWorldVector(Vec2(0, ROCKET_BULLET_VELOCITY));
-                createBullet(ctx, pos, vel);
-                rocket.nextBullet = ctx.worldTimeMs + 200
-            }
+            ctx.rocket.update(ctx.rocket, testbed.activeKeys);
         }
 
         applyEdgeForce();
