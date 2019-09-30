@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
-  entry: './src/asteroids.js',
+  entry: './src/asteroids-testbed.js',
   mode: 'development',
   devtool: 'inline-source-map',
   devServer: {
