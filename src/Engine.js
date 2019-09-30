@@ -66,6 +66,7 @@ export default class Engine {
         if (this.rocket) {
             this.rocket.update(this.rocket, activeKeys);
         }
+        this.world.step(dtMs / 1000);
 
         applyEdgeForce(this.world, this.worldRadiusSquared);
         for (let body = this.world.getBodyList(); body; body = body.getNext()) {

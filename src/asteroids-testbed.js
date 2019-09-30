@@ -1,53 +1,61 @@
 import Engine from './Engine.js';
+import renderWorld from './WorldRenderer.js';
 import createAsteroid from './asteroid.js';
 import createRocket from './rocket.js';
 import { rnd } from './math.js';
 import { cat } from './constants.js';
 
-planck.testbed('Asteroids', function(testbed) {
+const canvas = document.getElementById('canvas');
+const renderContext = canvas.getContext('2d');
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
 
-    testbed.speed = 1;
-    testbed.hz = 50;
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
 
-    const engine = new Engine();
+const engine = new Engine();
 
-    // rocket
-    createRocket(engine);
+// rocket
+createRocket(engine);
 
-    // Create asteroids, init spawn chain
-    for (let i = 0; i < 10; i++) {
-        createAsteroid(engine, Math.floor(rnd(1, 5)));
-    }
+// Create asteroids, init spawn chain
+for (let i = 0; i < 10; i++) {
+    createAsteroid(engine, Math.floor(rnd(1, 5)));
+}
 
-    function spawnAsteroid() {
-        createAsteroid(engine, Math.floor(rnd(1, 5)));
-        engine.scheduler.schedule(engine.worldTimeMs + 1000, spawnAsteroid);
-    }
+function spawnAsteroid() {
+    createAsteroid(engine, Math.floor(rnd(1, 5)));
+    engine.scheduler.schedule(engine.worldTimeMs + 1000, spawnAsteroid);
+}
 
-    engine.scheduler.schedule(1000, function () {
-        spawnAsteroid();
-    });
-
-    // edge 
-    const edge = engine.world.createBody();
-    edge.createFixture(planck.Circle(engine.worldRadius), {
-        isSensor: true,
-        filterCategoryBits: cat.edge,
-        filterMaskBits: cat.rocket | cat.asteroid
-    });
-    
-
-    testbed.step = function(dt) {
-        engine.update(dt, testbed.activeKeys);
-        
-        if (engine.rocket) {
-            const pos = engine.rocket.getPosition();
-            testbed.x = pos.x;
-            testbed.y = -pos.y;
-        }
-    };
-
-    testbed.info('‹/›: rotate, ^: Accelerate, A: Fire');
-
-    return engine.world;
+engine.scheduler.schedule(1000, function () {
+    spawnAsteroid();
 });
+
+// edge
+const edge = engine.world.createBody();
+edge.createFixture(planck.Circle(engine.worldRadius), {
+    isSensor: true,
+    filterCategoryBits: cat.edge,
+    filterMaskBits: cat.rocket | cat.asteroid
+});
+
+function render() {
+    const dtMs = 1000/60;
+    //engine.update(dt, testbed.activeKeys);
+    engine.update(dtMs, {});
+    renderContext.setTransform(1, 0, 0, 1, 0, 0);
+    renderContext.clearRect(0, 0, canvas.width, canvas.height);
+    renderContext.fillStyle = 'rgba(0,0,0,1)';
+    renderContext.fillRect(0, 0, canvas.width, canvas.height);
+
+    renderContext.scale(10, 10);
+    renderContext.translate(20, 20);
+    renderWorld(renderContext, engine.world);
+    requestAnimationFrame(render);
+}
+
+requestAnimationFrame(render);
+
