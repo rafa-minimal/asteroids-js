@@ -1,5 +1,6 @@
 import Scheduler from './Scheduler.js';
 import createAsteroid from './asteroid.js';
+import createRocket from './rocket.js';
 import { rnd } from './math.js';
 
 planck.testbed('Asteroids', function(testbed) {
@@ -12,8 +13,6 @@ planck.testbed('Asteroids', function(testbed) {
     const world = new pl.World({
         gravity : Vec2(0, 0)
     });
-    const toDestroy = [];
-    const scheduler = new Scheduler();
 
     // world
     const worldRadius = 20;
@@ -21,8 +20,11 @@ planck.testbed('Asteroids', function(testbed) {
 
     const ctx = {
         world: world,
-        scheduler: scheduler,
-        worldRadius: worldRadius
+        scheduler: new Scheduler(),
+        worldRadius: worldRadius,
+        toDestroy: [],
+        rocket: null,
+        worldTimeMs: 0
     };
 
     const asteroidCat = 0b00001;
@@ -38,51 +40,7 @@ planck.testbed('Asteroids', function(testbed) {
     const DEFAULT_ROCKET_LINEAR_DAMPING = 0.2;
 
     // rocket
-    const rocketHolder = {instance: null};
-    function createRocket() {
-        const rocket = world.createDynamicBody({dynamicDamping: DEFAULT_ROCKET_LINEAR_DAMPING});
-
-        rocket.createFixture(pl.Polygon([
-            Vec2(-1, -1),
-            Vec2( 0,  1),
-            Vec2( 1, -1)
-        ]), {
-            density: 0.5,
-            friction: 0.5,
-            filterCategoryBits: rocketCat,
-            filterMaskBits: edgeCat | rocketCat | asteroidCat
-        });
-        // MassData is not exported
-        // const massData = pl.MassData();
-        const massData = {center: Vec2()};
-        rocket.getMassData(massData);
-        massData.center.setZero();
-        rocket.setMassData(massData);
-
-        rocket.rocket = true;
-        rocket.nextBullet = 0;
-        rocket.energy = 10;
-        rocket.postSolve = (contact, impulse, self, other) => {
-            let sum = impulse.normalImpulses.reduce((sum, impulse) => (sum || 0) + impulse);
-            self.energy -= sum;
-            if (self.energy <= 0) {
-                toDestroy.push(self);
-            }
-        };
-        rocket.beforeDestroy = (self) => {
-            rocketHolder.instance = null;
-            const securityCircle = world.createBody();
-            securityCircle.createFixture(pl.Circle(3), {
-                filterCategoryBits: asteroidCat,
-                filterMaskBits: asteroidCat
-            });
-            // todo: czas dziwnie szybko upływa
-            scheduler.schedule(worldTimeMs + 5000, () => world.destroyBody(securityCircle));
-            scheduler.schedule(worldTimeMs + 5000, () => createRocket())
-        };
-        rocketHolder.instance = rocket;
-    }
-    createRocket();
+    createRocket(ctx);
 
     /* The time [sec] after which angular velocity reaches 64% of max value */
     const angularTau = 0.11;
@@ -90,7 +48,7 @@ planck.testbed('Asteroids', function(testbed) {
     const maxAngularVel = 4.5;
 
     const nominalAngDamping = 1.0/angularTau;
-    const maxTorque = maxAngularVel * nominalAngDamping * rocketHolder.instance.getInertia();
+    const maxTorque = maxAngularVel * nominalAngDamping * ctx.rocket.getInertia();
 
     // Create asteroids, init spawn chain
     for (let i = 0; i < 10; i++) {
@@ -99,10 +57,10 @@ planck.testbed('Asteroids', function(testbed) {
 
     function spawnAsteroid() {
         createAsteroid(ctx, Math.floor(rnd(1, 5)));
-        scheduler.schedule(worldTimeMs + 1000, spawnAsteroid);
+        ctx.scheduler.schedule(ctx.worldTimeMs + 1000, spawnAsteroid);
     }
 
-    scheduler.schedule(1000, function () {
+    ctx.scheduler.schedule(1000, function () {
         spawnAsteroid();
     });
 
@@ -146,15 +104,15 @@ planck.testbed('Asteroids', function(testbed) {
             filterMaskBits: asteroidCat
         });
         bullet.bullet = true;
-        bullet.deadTimeMs = worldTimeMs + 5000;
+        bullet.deadTimeMs = ctx.worldTimeMs + 5000;
         bullet.beginContact = (contact, self, other) => {
             if (other.energy) {
                 other.energy -= 10;
                 if (other.energy <= 0) {
-                    toDestroy.push(other);
+                    ctx.toDestroy.push(other);
                 }
             }
-            toDestroy.push(self);
+            ctx.toDestroy.push(self);
         };
         bullet.beforeDestroy = (self) => {
             // todo: emit particles
@@ -183,20 +141,10 @@ planck.testbed('Asteroids', function(testbed) {
         }
     });
 
-    testbed.keydown = function() {
-        if (testbed.activeKeys.down) {
-
-        } else if (testbed.activeKeys.up) {
-
-        }
-    };
-
-    let worldTimeMs = 0;
-
     testbed.step = function(dt) {
-        worldTimeMs += dt;
-        if (rocketHolder.instance) {
-            const rocket = rocketHolder.instance
+        ctx.worldTimeMs += dt;
+        if (ctx.rocket) {
+            const rocket = ctx.rocket;
             if (testbed.activeKeys.right && !testbed.activeKeys.left) {
                 rocket.setAngularDamping(nominalAngDamping);
                 rocket.applyTorque(-maxTorque, true);
@@ -210,31 +158,31 @@ planck.testbed('Asteroids', function(testbed) {
                 const force = rocket.getWorldVector(Vec2(0, ROCKET_THRUST));
                 rocket.applyForceToCenter(force, true);
             }
-            if (testbed.activeKeys.fire && worldTimeMs >= rocket.nextBullet) {
+            if (testbed.activeKeys.fire && ctx.worldTimeMs >= rocket.nextBullet) {
                 const pos = rocket.getWorldPoint(Vec2(0, 1.52));
                 const vel = rocket.getWorldVector(Vec2(0, ROCKET_BULLET_VELOCITY));
                 createBullet(pos, vel);
-                rocket.nextBullet = worldTimeMs + 200
+                rocket.nextBullet = ctx.worldTimeMs + 200
             }
         }
 
         applyEdgeForce();
         for (let body = world.getBodyList(); body; body = body.getNext()) {
-            if (body.deadTimeMs && worldTimeMs > body.deadTimeMs) {
-                toDestroy.push(body)
+            if (body.deadTimeMs && ctx.worldTimeMs > body.deadTimeMs) {
+                ctx.toDestroy.push(body)
             }
         }
-        while(toDestroy.length > 0) {
-            let ent = toDestroy.pop();
+        while(ctx.toDestroy.length > 0) {
+            let ent = ctx.toDestroy.pop();
             if (ent.beforeDestroy) {
                 ent.beforeDestroy(ent)
             }
             world.destroyBody(ent)
         }
-        scheduler.update(worldTimeMs);
+        ctx.scheduler.update(ctx.worldTimeMs);
 
-        if (rocketHolder.instance) {
-            const pos = rocketHolder.instance.getPosition();
+        if (ctx.rocket) {
+            const pos = ctx.rocket.getPosition();
             testbed.x = pos.x;
             testbed.y = -pos.y;
         }
