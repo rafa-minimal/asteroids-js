@@ -45,16 +45,17 @@ edge.createFixture(planck.Circle(engine.worldRadius), {
     filterMaskBits: cat.rocket | cat.asteroid
 });
 
+function clear(ctx) {
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'rgba(0,0,0,1)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
 function render() {
     const dtMs = 1000/60;
     engine.update(dtMs, input);
-    renderContext.setTransform(1, 0, 0, 1, 0, 0);
-    renderContext.clearRect(0, 0, canvas.width, canvas.height);
-    renderContext.fillStyle = 'rgba(0,0,0,1)';
-    renderContext.fillRect(0, 0, canvas.width, canvas.height);
-
-    renderContext.scale(10, 10);
-    renderContext.translate(20, 20);
+    clear(renderContext);
     renderWorld(renderContext, engine.world);
     requestAnimationFrame(render);
 }

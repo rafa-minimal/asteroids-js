@@ -61,10 +61,10 @@ export default function createRocket(ctx) {
     rocket.update = (self, input) => {
         if (input.right && !input.left) {
             self.setAngularDamping(nominalAngDamping);
-            self.applyTorque(maxTorque, true);
+            self.applyTorque(-maxTorque, true);
         } else if (input.left && !input.right) {
             self.setAngularDamping(nominalAngDamping);
-            self.applyTorque(-maxTorque, true);
+            self.applyTorque(maxTorque, true);
         } else {
             self.setAngularDamping(nominalAngDamping * 3);
         }

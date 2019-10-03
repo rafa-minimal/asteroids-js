@@ -18,6 +18,12 @@ function renderFixture(ctx, f) {
 }
 
 export default function render(ctx, world) {
+    ctx.save();
+    ctx.transform(1, 0, 0, -1, ctx.canvas.width/2, ctx.canvas.height/2);
+
+    // camera
+    ctx.scale(10, 10);
+
     ctx.lineCap = 'round';
     ctx.lineWidth = 0.2;
     ctx.strokeStyle = 'rgba(255,255,255,0.9)';
@@ -32,6 +38,7 @@ export default function render(ctx, world) {
         }
         ctx.restore();
     }
+    ctx.restore();
 }
 
 function drawCircle(ctx, shape) {
