@@ -1,3 +1,5 @@
+import './main.css';
+
 import Engine from './Engine.js';
 import renderWorld from './WorldRenderer.js';
 import createAsteroid from './asteroid.js';
