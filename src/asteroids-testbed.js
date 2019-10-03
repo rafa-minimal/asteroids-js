@@ -1,6 +1,7 @@
 import './main.css';
 
 import Engine from './Engine.js';
+import input from './input.js';
 import renderWorld from './WorldRenderer.js';
 import createAsteroid from './asteroid.js';
 import createRocket from './rocket.js';
@@ -46,8 +47,7 @@ edge.createFixture(planck.Circle(engine.worldRadius), {
 
 function render() {
     const dtMs = 1000/60;
-    //engine.update(dt, testbed.activeKeys);
-    engine.update(dtMs, {});
+    engine.update(dtMs, input);
     renderContext.setTransform(1, 0, 0, 1, 0, 0);
     renderContext.clearRect(0, 0, canvas.width, canvas.height);
     renderContext.fillStyle = 'rgba(0,0,0,1)';

@@ -1,33 +1,33 @@
 
 function renderFixture(ctx, f) {
-    var type = f.getType();
-    var shape = f.getShape();
+    const type = f.getType();
+    const shape = f.getShape();
 
-    if (type == 'circle') {
+    if (type === 'circle') {
         drawCircle(ctx, shape);
     }
-    if (type == 'edge') {
+    if (type === 'edge') {
         drawEdge(ctx, shape);
     }
-    if (type == 'polygon') {
+    if (type === 'polygon') {
         drawPolygon(ctx, shape);
     }
-    if (type == 'chain') {
+    if (type === 'chain') {
         drawChain(ctx, shape);
     }
 }
 
 export default function render(ctx, world) {
     ctx.lineCap = 'round';
-    ctx.lineWidth = '4px';
+    ctx.lineWidth = 0.2;
     ctx.strokeStyle = 'rgba(255,255,255,0.9)';
 
-    for (var b = world.getBodyList(); b; b = b.getNext()) {
+    for (let b = world.getBodyList(); b; b = b.getNext()) {
         const pos = b.getPosition();
         ctx.save();
         ctx.translate(pos.x, pos.y);
         ctx.rotate(b.getAngle());
-        for (var f = b.getFixtureList(); f; f = f.getNext()) {
+        for (let f = b.getFixtureList(); f; f = f.getNext()) {
             renderFixture(ctx, f)
         }
         ctx.restore();
@@ -35,8 +35,8 @@ export default function render(ctx, world) {
 }
 
 function drawCircle(ctx, shape) {
-    var r = shape.getRadius();
-    let cx = 0, cy = 0;
+    const r = shape.getRadius();
+    const cx = 0, cy = 0;
     ctx.beginPath();
     ctx.arc(cx, cy, r, 0, 2 * Math.PI);
     ctx.stroke();

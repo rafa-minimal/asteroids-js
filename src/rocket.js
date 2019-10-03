@@ -58,21 +58,21 @@ export default function createRocket(ctx) {
         ctx.scheduler.schedule(ctx.worldTimeMs + 5000, () => ctx.world.destroyBody(securityCircle));
         ctx.scheduler.schedule(ctx.worldTimeMs + 5000, () => createRocket(ctx))
     };
-    rocket.update = (self, activeKeys) => {
-        if (activeKeys.right && !activeKeys.left) {
-            self.setAngularDamping(nominalAngDamping);
-            self.applyTorque(-maxTorque, true);
-        } else if (activeKeys.left && !activeKeys.right) {
+    rocket.update = (self, input) => {
+        if (input.right && !input.left) {
             self.setAngularDamping(nominalAngDamping);
             self.applyTorque(maxTorque, true);
+        } else if (input.left && !input.right) {
+            self.setAngularDamping(nominalAngDamping);
+            self.applyTorque(-maxTorque, true);
         } else {
             self.setAngularDamping(nominalAngDamping * 3);
         }
-        if (activeKeys.up) {
+        if (input.up) {
             const force = self.getWorldVector(Vec2(0, ROCKET_THRUST));
             self.applyForceToCenter(force, true);
         }
-        if (activeKeys.fire && ctx.worldTimeMs >= self.nextBullet) {
+        if (input.fire && ctx.worldTimeMs >= self.nextBullet) {
             const pos = self.getWorldPoint(Vec2(0, 1.52));
             const vel = self.getWorldVector(Vec2(0, ROCKET_BULLET_VELOCITY));
             createBullet(ctx, pos, vel);

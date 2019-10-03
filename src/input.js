@@ -1,41 +1,40 @@
-const controls = {
+const input = {
     left: false,
     right: false,
-    throttle: false,
+    up: false,
     fire: false
-}
+};
+
+export default input
 
 function onKey(key, state) {
     switch(key) {
         case "ArrowLeft":
-            controls.left = state
-            return true
+            input.left = state;
+            return true;
         case "ArrowRight":
-            controls.right = state
-            return true
+            input.right = state;
+            return true;
         case "ArrowUp":
-            controls.throttle = state
-            return true
+            input.up = state;
+            return true;
         case "a":
-            controls.fire = state
-            return true
+            input.fire = state;
+            return true;
     }
 }
 
 function onKeyDown(e) {
     if (onKey(e.key, true)) {
-        e.preventDefault()
+        e.preventDefault();
     }
 }
 
 function onKeyUp(e) {
     if (onKey(e.key, false)) {
-        e.preventDefault()
+        e.preventDefault();
     }
 }
 
-export default function init() {
-    window.addEventListener( "keydown", onKeyDown, false);
-    window.addEventListener( "keyup", onKeyUp, false);
-    return controls
-}
+window.addEventListener( "keydown", onKeyDown, false);
+window.addEventListener( "keyup", onKeyUp, false);
