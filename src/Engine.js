@@ -1,6 +1,4 @@
-// todo: jeśli zrobię import, mam masę logów z Solvera, wydaje mi się, że coś (webpack?) ustawia window.DEBUG = true
-// globalny plank pochodzi z planck-with-testbed.js
-// import * as planck from 'planck-js';
+import * as planck from 'planck-js';
 import Scheduler from "./Scheduler";
 
 const EDGE_FORCE_FACTOR = 0.4;

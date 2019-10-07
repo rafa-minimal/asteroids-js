@@ -1,5 +1,6 @@
 import createAsteroid from './asteroid.js';
 import createRocket from './rocket.js';
+import * as planck from 'planck-js';
 import { rnd } from './math.js';
 import { cat } from './constants.js';
 
