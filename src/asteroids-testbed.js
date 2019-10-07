@@ -1,49 +1,19 @@
 import './main.css';
 
 import Engine from './Engine.js';
+import Camera from './Camera.js';
+import Level from './Level.js';
 import input from './input.js';
+import initCanvas from './canvas.js';
 import renderWorld from './WorldRenderer.js';
-import createAsteroid from './asteroid.js';
-import createRocket from './rocket.js';
-import { rnd } from './math.js';
-import { cat } from './constants.js';
 
-const canvas = document.getElementById('canvas');
-const renderContext = canvas.getContext('2d');
-function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
+const renderContext = initCanvas(document.getElementById('canvas'));
 
 const engine = new Engine();
+const level = new Level();
+const camera = new Camera(0, 0, level.worldRadius * 2);
 
-// rocket
-createRocket(engine);
-
-// Create asteroids, init spawn chain
-for (let i = 0; i < 10; i++) {
-    createAsteroid(engine, Math.floor(rnd(1, 5)));
-}
-
-function spawnAsteroid() {
-    createAsteroid(engine, Math.floor(rnd(1, 5)));
-    engine.scheduler.schedule(engine.worldTimeMs + 1000, spawnAsteroid);
-}
-
-engine.scheduler.schedule(1000, function () {
-    spawnAsteroid();
-});
-
-// edge
-const edge = engine.world.createBody();
-edge.createFixture(planck.Circle(engine.worldRadius), {
-    isSensor: true,
-    filterCategoryBits: cat.edge,
-    filterMaskBits: cat.rocket | cat.asteroid
-});
+level.init(engine);
 
 function clear(ctx) {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -56,9 +26,9 @@ function render() {
     const dtMs = 1000/60;
     engine.update(dtMs, input);
     clear(renderContext);
+    camera.fit(renderContext);
     renderWorld(renderContext, engine.world);
     requestAnimationFrame(render);
 }
 
 requestAnimationFrame(render);
-
