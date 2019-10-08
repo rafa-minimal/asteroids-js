@@ -1,4 +1,4 @@
-import './main.css';
+import './css/main.css';
 
 import Engine from './Engine.js';
 import Camera from './Camera.js';

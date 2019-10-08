@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
-  entry: './src/asteroids-testbed.js',
+  entry: './src/client/asteroids.js',
   mode: 'development',
   devtool: 'inline-source-map',
   devServer: {
@@ -30,13 +30,12 @@ module.exports = {
   },
   plugins: [
       new CleanWebpackPlugin(),
-      // Dzięki temu pluginowi HtmlWebpackPlugin dołączy css jako link: https://webpack.js.org/plugins/html-webpack-plugin/
       new MiniCssExtractPlugin({
         filename: '[name].[contenthash].css',
       }),
       new HtmlWebpackPlugin({
         filename: 'index.html',
-        template: 'src/index.html'
+        template: 'src/client/html/index.html'
       })
   ]
 };
