@@ -5,15 +5,9 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
   entry: './src/client/asteroids.js',
-  mode: 'development',
-  devtool: 'inline-source-map',
-  devServer: {
-    contentBase: './dist',
-    hot: true
-  },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'asteroids.[contenthash].js'
+    filename: 'asteroids.[hash].js'
   },
   module: {
     rules: [
@@ -31,7 +25,7 @@ module.exports = {
   plugins: [
       new CleanWebpackPlugin(),
       new MiniCssExtractPlugin({
-        filename: '[name].[contenthash].css',
+        filename: '[name].[hash].css',
       }),
       new HtmlWebpackPlugin({
         filename: 'index.html',
