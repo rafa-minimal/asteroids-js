@@ -1,11 +1,18 @@
-const express = require('express');
+const webpackDevServer = require('webpack-dev-server');
 const webpack = require('webpack');
-const webpackDevMiddleware = require('webpack-dev-middleware');
-const webpackConfig = require('../../webpack.dev.js');
 
-const app = express();
-const compiler = webpack(webpackConfig);
-app.use(webpackDevMiddleware(compiler));
+const config = require('../../webpack.dev.js');
+const options = {
+    contentBase: './dist',
+    hot: true,
+    host: 'localhost',
+};
+
+webpackDevServer.addDevServerEntrypoints(config, options);
+const compiler = webpack(config);
+const server = new webpackDevServer(compiler, options);
 const port = process.env.PORT || 8080;
-const server = app.listen(port);
-console.log(`Server listening on port ${port}`);
+
+server.listen(port, 'localhost', () => {
+    console.log(`Server listening on port ${port}`);
+});
