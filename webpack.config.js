@@ -13,7 +13,7 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'asteroids.bundle.js'
+    filename: 'asteroids.[contenthash].js'
   },
   module: {
     rules: [
