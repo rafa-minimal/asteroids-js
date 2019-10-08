@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --config webpack.prod.js",
-    "dev": "webpack-dev-server --config webpack.dev.js --open"
+    "dev-single": "webpack-dev-server --config webpack.dev.js --open",
+    "dev": "node src/server/server-dev.js",
+    "start": "node src/server/server.js"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +21,7 @@
     "webpack": "^4.39.2",
     "webpack-cli": "^3.3.7",
     "webpack-dev-server": "^3.8.1",
+    "webpack-hot-middleware": "^2.25.0",
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
