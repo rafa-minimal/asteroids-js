@@ -1,8 +1,8 @@
-import createAsteroid from './asteroid.js';
-import createRocket from './rocket.js';
+import createAsteroid from '../shared/asteroid.js';
+import createRocket from '../shared/rocket.js';
 import * as planck from 'planck-js';
-import { rnd } from './math.js';
-import { cat } from './constants.js';
+import { rnd } from '../shared/math.js';
+import { cat } from '../shared/constants.js';
 
 export default class Level {
     constructor() {

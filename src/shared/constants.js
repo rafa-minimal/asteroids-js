@@ -1,4 +1,4 @@
-export const cat = {
+exports.cat = {
     asteroid: 0b00001,
     rocket:   0b00010,
     bullet:   0b00100,

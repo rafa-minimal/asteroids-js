@@ -1,5 +1,5 @@
-import * as planck from 'planck-js';
-import Scheduler from "./Scheduler";
+const planck = require('planck-js');
+const Scheduler = require('./Scheduler.js');
 
 const EDGE_FORCE_FACTOR = 0.4;
 const DEFAULT_ROCKET_LINEAR_DAMPING = 0.2;
@@ -24,7 +24,7 @@ function applyEdgeForce(world, worldRadiusSquared) {
     }
 }
 
-export default class Engine {
+module.exports = class Engine {
     constructor() {
         this.world = new planck.World({
             gravity: Vec2(0, 0)
@@ -81,4 +81,4 @@ export default class Engine {
         }
         this.scheduler.update(this.worldTimeMs);
     }
-}
+};

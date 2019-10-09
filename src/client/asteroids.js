@@ -1,6 +1,6 @@
 import './css/main.css';
 
-import Engine from './Engine.js';
+import Engine from '../shared/Engine.js';
 import Camera from './Camera.js';
 import Level from './Level.js';
 import input from './input.js';

@@ -1,4 +1,4 @@
-export default class Scheduler {
+module.exports = class Scheduler {
 
     constructor() {
         this.scheduledEvents = [];
@@ -22,4 +22,4 @@ export default class Scheduler {
             this.scheduledEvents.pop().action();
         }
     }
-}
+};

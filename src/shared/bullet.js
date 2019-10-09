@@ -1,5 +1,5 @@
-import * as planck from 'planck-js';
-import { cat } from './constants.js';
+const cat = require('./constants.js').cat;
+const planck = require('planck-js');
 
 export default function createBullet(ctx, pos, vel) {
     const bullet = ctx.world.createDynamicBody({

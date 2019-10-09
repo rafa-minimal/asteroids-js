@@ -1,6 +1,10 @@
-import { rnd, rndVecRadius, rotateDeg } from './math.js';
-import { cat } from './constants.js';
-import planck from 'planck-js';
+const math = require('./math.js');
+const cat = require('./constants.js').cat;
+const planck = require('planck-js');
+
+const rnd = math.rnd;
+const rndVecRadius = math.rndVecRadius;
+const rotateDeg = math.rotateDeg;
 
 const Vec2 = planck.Vec2;
 
@@ -12,7 +16,7 @@ const ASTEROID_MAX_SPEED = 4.0;
 const ASTEROID_MAX_OMEGA = 2.0;
 
 // asteroid
-export default function createAsteroid(ctx, level, pos, vel) {
+module.exports = function createAsteroid(ctx, level, pos, vel) {
     pos = pos || rndVecRadius(rnd(ctx.worldRadius));
     vel = vel || rndVecRadius(ASTEROID_MAX_SPEED);
 
