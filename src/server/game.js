@@ -7,7 +7,7 @@ class Game {
         this.lastUpdateTimeMs = Date.now();
         this.frameNumber = 1;
         this.sendUpdateEvery = 2;
-        this.shouldSendUpdate = false;
+        this.frameRate = 60;
 
         this.interval = null;
 
@@ -18,7 +18,7 @@ class Game {
 
     start() {
         if (this.interval === null) {
-            this.interval = setInterval(this.update.bind(this), 1000 / 60);
+            this.interval = setInterval(this.update.bind(this), 1000 / this.frameRate);
         } else {
             console.error("Game already started")
         }
@@ -53,7 +53,7 @@ class Game {
     update() {
         // Calculate time elapsed
         const nowMs = Date.now();
-        const dtMs = (nowMs - this.lastUpdateTimeMs) / 1000;
+        const dtMs = (nowMs - this.lastUpdateTimeMs);
         this.lastUpdateTimeMs = nowMs;
 
         this.engine.update(dtMs);
@@ -74,9 +74,15 @@ class Game {
             array[i++] = pos.y;
         }
 
+        /*
+        // todo: correct way - network order (big endian)
+        const buffer = Buffer.alloc(40);
+        for (let i = 0; i < 40; i+=4) {
+
+        buffer.writeFloatBE((i-5)*2, i)
+        }*/
+
         this.webSockets.forEach((webSocket) => webSocket.send(array));
-
-
     }
 }
 
