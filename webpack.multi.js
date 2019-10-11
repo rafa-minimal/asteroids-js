@@ -12,8 +12,8 @@ module.exports = {
     mode: 'development',
     devtool: 'inline-source-map',
     devServer: {
-        contentBase: './dist',
-        hot: true
+        hot: true,
+        overlay: {errors: true, warnings: true}
     },
     module: {
         rules: [
