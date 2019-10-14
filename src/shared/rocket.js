@@ -1,6 +1,6 @@
-import * as planck from 'planck-js';
-import { cat } from './constants.js';
-import createBullet from "./bullet";
+const planck = require('planck-js');
+const cat = require("../shared/constants").cat;
+const createBullet = require("./bullet");
 
 const DEFAULT_ROCKET_LINEAR_DAMPING = 0.2;
 const ROCKET_BULLET_VELOCITY = 25;
@@ -15,7 +15,7 @@ const maxAngularVel = 4.5;
 const nominalAngDamping = 1.0/angularTau;
 var maxTorque = 0;
 
-export default function createRocket(ctx) {
+module.exports = function createRocket(ctx) {
     const rocket = ctx.world.createDynamicBody({dynamicDamping: DEFAULT_ROCKET_LINEAR_DAMPING});
 
     rocket.createFixture(planck.Polygon([
@@ -80,4 +80,4 @@ export default function createRocket(ctx) {
         }
     };
     ctx.rocket = rocket;
-}
+};

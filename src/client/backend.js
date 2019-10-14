@@ -24,8 +24,6 @@ socket.onerror = event => {
 };
 socket.onmessage = event => {
     state.snapshot = event.data;
-    let snapshot = event.data;
-    const view = new DataView(snapshot);
 };
 socket.onopen = event => {
     console.log("open, event:", event);

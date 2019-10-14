@@ -1,7 +1,7 @@
 const cat = require('./constants.js').cat;
 const planck = require('planck-js');
 
-export default function createBullet(ctx, pos, vel) {
+module.exports = function createBullet(ctx, pos, vel) {
     const bullet = ctx.world.createDynamicBody({
         position: pos,
         linearVelocity: vel,
@@ -27,4 +27,4 @@ export default function createBullet(ctx, pos, vel) {
     bullet.beforeDestroy = (self) => {
         // todo: emit particles
     }
-}
+};
