@@ -1,4 +1,10 @@
-const socket = new WebSocket("ws://" + window.location.host + "/echo");
+// workaround when opening from local file system (file://...)
+let host = window.location.host;
+if (host.length === 0) {
+    host = 'localhost:8080'
+}
+
+const socket = new WebSocket("ws://" + host + "/echo");
 socket.binaryType = 'arraybuffer';
 
 const state = {
@@ -20,8 +26,6 @@ socket.onmessage = event => {
     state.snapshot = event.data;
     let snapshot = event.data;
     const view = new DataView(snapshot);
-    console.log("First float little endian: ", view.getFloat32(4, true), " big endian: ", view.getFloat32(4, false))
-    console.log("First float little endian: ", view.getFloat32(8, true), " big endian: ", view.getFloat32(8, false))
 };
 socket.onopen = event => {
     console.log("open, event:", event);

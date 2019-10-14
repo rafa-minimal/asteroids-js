@@ -1,3 +1,6 @@
+require('hot-module-replacement')({
+    ignore: /node_modules/
+});
 const express = require('express');
 
 const app = express();
@@ -7,10 +10,10 @@ app.use('/', express.static('dist'));
 
 // todo: to be moved to separate game-server.js
 require('express-ws')(app);
-const Game = require('./game.js');
+const Game = require('./game');
 const WebSocket = require('ws');
 
-const game = new Game();
+let game = new Game();
 game.start();
 
 app.ws('/echo', function(ws, req) {
@@ -38,15 +41,6 @@ app.ws('/echo', function(ws, req) {
     });
 });
 
-/*function update() {
-    clients.forEach((ws) => {
-        if (ws.readyState === WebSocket.OPEN) {
-            ws.send("update!");
-        }
-    })
-}
-
-setInterval(update, 2000);*/
 
 // --
 const port = process.env.PORT || 8080;
@@ -63,3 +57,10 @@ process.once('SIGTERM', function (code) {
     console.log('Shutting down...');
     server.close();
 });
+
+if (module.hot) {
+    module.hot.accept('./game', () => {
+        console.log('HMR: ./game');
+        game = require('./game');
+    });
+}

@@ -1,10 +1,9 @@
 import './css/main.css';
 
 import Camera from './Camera.js';
-import input from './input.js';
 import initCanvas from './canvas.js';
 import renderSnapshot from './SnapshotRenderer.js';
-import state from './backend.js'
+import state from './backend.js';
 
 const renderContext = initCanvas(document.getElementById('canvas'));
 

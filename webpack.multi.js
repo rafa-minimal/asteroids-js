@@ -13,7 +13,13 @@ module.exports = {
     devtool: 'inline-source-map',
     devServer: {
         hot: true,
-        overlay: {errors: true, warnings: true}
+        overlay: {errors: true, warnings: true},
+        proxy: {
+            '/echo': {
+                target: 'ws://localhost:8080',
+                ws: true,
+            },
+        },
     },
     module: {
         rules: [
