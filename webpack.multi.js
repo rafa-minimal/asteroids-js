@@ -34,7 +34,7 @@ module.exports = {
             filename: '[name].[hash].css',
         }),
         new HtmlWebpackPlugin({
-            filename: 'asteroids.html',
+            filename: 'index.html',
             template: 'src/client/html/asteroids.html'
         })
     ]

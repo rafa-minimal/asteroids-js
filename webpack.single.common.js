@@ -1,12 +1,11 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
   entry: './src/client/asteroids.js',
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'dist/single'),
     filename: 'asteroids.[hash].js'
   },
   module: {
@@ -23,13 +22,12 @@ module.exports = {
     ],
   },
   plugins: [
-      new CleanWebpackPlugin(),
       new MiniCssExtractPlugin({
         filename: '[name].[hash].css',
       }),
       new HtmlWebpackPlugin({
         filename: 'index.html',
-        template: 'src/client/html/index.html'
+        template: 'src/client/html/single.html'
       })
   ]
 };
