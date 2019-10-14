@@ -19,8 +19,8 @@ module.exports = class Level {
             engine.scheduler.schedule(engine.worldTimeMs + 1000, spawnAsteroid);
         }
 
-        engine.scheduler.schedule(1000, function () {
+        /*engine.scheduler.schedule(1000, function () {
             spawnAsteroid();
-        });
+        });*/
     }
 };

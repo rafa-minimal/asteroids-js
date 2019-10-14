@@ -10,7 +10,7 @@ app.use('/', express.static('dist'));
 
 // todo: to be moved to separate game-server.js
 require('express-ws')(app);
-const Game = require('./game');
+let Game = require('./game');
 const WebSocket = require('ws');
 
 let game = new Game();
@@ -61,6 +61,11 @@ process.once('SIGTERM', function (code) {
 if (module.hot) {
     module.hot.accept('./game', () => {
         console.log('HMR: ./game');
-        game = require('./game');
+        Game = require('./game');
+        let oldGame = game;
+        oldGame.stop();
+        game = new Game();
+        game.start();
+        oldGame.webSockets.forEach(ws => game.addPlayer(ws))
     });
 }

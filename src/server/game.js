@@ -67,25 +67,19 @@ class Game {
     }
 
     sendUpdate() {
-        const array = new Float32Array(this.engine.world.m_bodyCount * 2);
+        const buffer = Buffer.alloc(this.engine.world.m_bodyCount * 2 * 4);
         let i = 0;
         for (let b = this.engine.world.getBodyList(); b; b = b.getNext()) {
             const pos = b.getPosition();
-            array[i++] = pos.x;
-            array[i++] = pos.y;
+            buffer.writeFloatBE(pos.x, i);
+            i+=4;
+            buffer.writeFloatBE(pos.y, i);
+            i+=4;
         }
-
-        /*
-        // todo: correct way - network order (big endian)
-        const buffer = Buffer.alloc(40);
-        for (let i = 0; i < 40; i+=4) {
-
-        buffer.writeFloatBE((i-5)*2, i)
-        }*/
 
         this.webSockets.forEach((webSocket) => {
             if (webSocket.readyState === WebSocket.OPEN) {
-                webSocket.send(array)
+                webSocket.send(buffer)
             }
         });
     }
