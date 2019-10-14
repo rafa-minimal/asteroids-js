@@ -20,8 +20,7 @@ app.ws('/echo', function(ws, req) {
     console.log('new client connected');
     game.addPlayer(ws);
     ws.on('message', function(msg) {
-        console.log('message');
-        game.handleInput(msg);
+        game.handleInput(ws, msg);
     });
     ws.on('close', function(args) {
         console.log('closed: ', args);

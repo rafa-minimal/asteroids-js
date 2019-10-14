@@ -58,7 +58,8 @@ module.exports = function createRocket(ctx) {
         ctx.scheduler.schedule(ctx.worldTimeMs + 5000, () => ctx.world.destroyBody(securityCircle));
         ctx.scheduler.schedule(ctx.worldTimeMs + 5000, () => createRocket(ctx))
     };
-    rocket.update = (self, input) => {
+    rocket.update = (self) => {
+        const input = self.input;
         if (input.right && !input.left) {
             self.setAngularDamping(nominalAngDamping);
             self.applyTorque(-maxTorque, true);
@@ -79,5 +80,7 @@ module.exports = function createRocket(ctx) {
             self.nextBullet = ctx.worldTimeMs + 200
         }
     };
+    rocket.input = {left: false, right: false, up: false, fire: false};
     ctx.rocket = rocket;
+    return rocket;
 };

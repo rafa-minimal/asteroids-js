@@ -3,7 +3,8 @@ import './css/main.css';
 import Camera from './Camera.js';
 import initCanvas from './canvas.js';
 import renderSnapshot from './SnapshotRenderer.js';
-import state from './backend.js';
+import backend from './backend.js';
+import input from './input.js';
 
 const renderContext = initCanvas(document.getElementById('canvas'));
 
@@ -20,7 +21,8 @@ function render() {
     const dtMs = 1000/60;
     clear(renderContext);
     camera.fit(renderContext);
-    renderSnapshot(renderContext, state.snapshot);
+    renderSnapshot(renderContext, backend.state.snapshot);
+    backend.update(input);
     requestAnimationFrame(render);
 }
 

@@ -62,7 +62,7 @@ module.exports = class Engine {
     update(dtMs, activeKeys) {
         this.worldTimeMs += dtMs;
         if (this.rocket) {
-            this.rocket.update(this.rocket, activeKeys);
+            this.rocket.update(this.rocket);
         }
         this.world.step(dtMs / 1000);
 

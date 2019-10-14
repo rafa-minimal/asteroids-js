@@ -24,7 +24,10 @@ function clear(ctx) {
 
 function render() {
     const dtMs = 1000/60;
-    engine.update(dtMs, input);
+    if (engine.rocket) {
+        engine.rocket.input = input;
+    }
+    engine.update(dtMs);
     clear(renderContext);
     camera.fit(renderContext);
     renderWorld(renderContext, engine.world);

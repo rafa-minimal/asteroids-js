@@ -12,9 +12,9 @@ const state = {
     snapshot: null
 };
 
-export default state
 
-var ready = false;
+let ready = false;
+const buffer = new Uint8Array(4);
 
 socket.onclose = event => {
     console.log("console, event:", event)
@@ -33,6 +33,13 @@ socket.onopen = event => {
 
 function update(controls) {
     if (ready) {
-        socket.send(JSON.stringify(controls));
+        buffer[0] = controls.left  && 1 || 0;
+        buffer[1] = controls.right && 1 || 0;
+        buffer[2] = controls.up    && 1 || 0;
+        buffer[3] = controls.fire  && 1 || 0;
+        socket.send(buffer);
     }
 }
+
+module.exports.state = state;
+module.exports.update = update;

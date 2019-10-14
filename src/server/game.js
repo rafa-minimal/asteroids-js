@@ -48,11 +48,13 @@ class Game {
         if (index !== -1) this.webSockets.splice(index, 1);
     }
 
-    handleInput(socket, dir) {
-        console.log("Input")
-        /*if (this.players[socket.id]) {
-            this.players[socket.id].setDirection(dir);
-        }*/
+    handleInput(webSocket, buffer) {
+        if (this.players[webSocket.id]) {
+            this.players[webSocket.id].input.left  = buffer[0] === 1 && true || false;
+            this.players[webSocket.id].input.right = buffer[1] === 1 && true || false;
+            this.players[webSocket.id].input.up    = buffer[2] === 1 && true || false;
+            this.players[webSocket.id].input.fire  = buffer[3] === 1 && true || false;
+        }
     }
 
     update() {
