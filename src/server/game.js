@@ -1,5 +1,6 @@
 const Engine = require('../shared/Engine.js');
 const Level = require('./Level.js');
+const WebSocket = require('ws');
 
 class Game {
     constructor() {
@@ -82,7 +83,11 @@ class Game {
         buffer.writeFloatBE((i-5)*2, i)
         }*/
 
-        this.webSockets.forEach((webSocket) => webSocket.send(array));
+        this.webSockets.forEach((webSocket) => {
+            if (webSocket.readyState === WebSocket.OPEN) {
+                webSocket.send(array)
+            }
+        });
     }
 }
 
