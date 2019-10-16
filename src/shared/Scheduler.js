@@ -10,8 +10,9 @@ module.exports = class Scheduler {
             action: action
         };
         for(let i = 0; i < this.scheduledEvents.length; i++) {
-            if (this.scheduledEvents[i].worldTimeMs > worldTimeMs ) {
-                this.scheduledEvents.splice(i, 0, event)
+            if (worldTimeMs <= this.scheduledEvents[i].worldTimeMs ) {
+                this.scheduledEvents.splice(i, 0, event);
+                return;
             }
         }
         this.scheduledEvents.push(event)

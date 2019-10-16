@@ -4,7 +4,7 @@
   "description": "",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha --recursive",
     "build:single": "webpack --config webpack.single.prod.js",
     "build:multi": "webpack --config webpack.multi.js",
     "dev-server:single": "webpack-dev-server --config webpack.single.dev.js --open",
@@ -20,6 +20,7 @@
     "hot-module-replacement": "^3.0.3",
     "html-webpack-plugin": "^3.2.0",
     "mini-css-extract-plugin": "^0.8.0",
+    "mocha": "^6.2.1",
     "webpack": "^4.39.2",
     "webpack-cli": "^3.3.7",
     "webpack-dev-server": "^3.8.1",
