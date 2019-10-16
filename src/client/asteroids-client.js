@@ -18,7 +18,6 @@ function clear(ctx) {
 }
 
 function render() {
-    const dtMs = 1000/60;
     clear(renderContext);
     camera.fit(renderContext);
     renderSnapshot(renderContext, backend.state.snapshot);

@@ -59,7 +59,7 @@ module.exports = class Engine {
         });
     }
 
-    update(dtMs, activeKeys) {
+    update(dtMs) {
         this.worldTimeMs += dtMs;
         if (this.rocket) {
             this.rocket.update(this.rocket);
@@ -80,5 +80,9 @@ module.exports = class Engine {
             this.world.destroyBody(ent)
         }
         this.scheduler.update(this.worldTimeMs);
+    }
+
+    entityCount() {
+        return this.world.m_bodyCount;
     }
 };

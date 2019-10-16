@@ -63,7 +63,7 @@ class Game {
         const dtMs = Math.min(nowMs - this.lastUpdateTimeMs, 60);
         this.lastUpdateTimeMs = nowMs;
 
-        this.engine.update(dtMs, {fire: true});
+        this.engine.update(dtMs);
 
         if(this.frameNumber % this.sendUpdateEvery === 0) {
             this.sendUpdate()
