@@ -18,6 +18,7 @@ const state = {
 let ready = false;
 
 let frameRate = new FrameRate();
+const buffer = new Uint8Array(4);
 
 socket.onclose = event => {
     console.log("console, event:", event)

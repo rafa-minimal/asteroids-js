@@ -3,6 +3,7 @@ const Level = require('./Level.js');
 const WebSocket = require('ws');
 const cat = require("../shared/constants").cat;
 const createRocket = require("../shared/rocket");
+const NetworkBuffer = require("../shared/NetworkBuffer");
 
 
 class Game {
@@ -19,6 +20,7 @@ class Game {
         this.engine = new Engine();
         this.level = new Level();
         this.level.init(this.engine);
+        this.updateBuffer = new NetworkBuffer(100 * 1024);
     }
 
     start() {
@@ -73,28 +75,22 @@ class Game {
     }
 
     sendUpdate() {
-        const buffer = Buffer.alloc(100 * 1024);
-        let i = 0;
+        const buffer = this.updateBuffer;
+        buffer.reset();
         for (let b = this.engine.world.getBodyList(); b; b = b.getNext()) {
             if (b.asteroid) {
-                buffer.writeInt8(cat.asteroid, i);
-                i++;
+                buffer.writeInt8(cat.asteroid);
             } else if (b.rocket) {
-                buffer.writeInt8(cat.rocket, i);
-                i++;
+                buffer.writeInt8(cat.rocket);
             } else if (b.bullet) {
-                buffer.writeInt8(cat.bullet, i);
-                i++;
+                buffer.writeInt8(cat.bullet);
             } else {
                 continue;
             }
             const pos = b.getPosition();
-            buffer.writeFloatBE(pos.x, i);
-            i+=4;
-            buffer.writeFloatBE(pos.y, i);
-            i+=4;
-            buffer.writeFloatBE(b.getAngle(), i);
-            i+=4;
+            buffer.writeFloat(pos.x);
+            buffer.writeFloat(pos.y);
+            buffer.writeFloat(b.getAngle());
             if (b.asteroid) {
                 let f = b.getFixtureList();
                 const type = f.getType();
@@ -102,15 +98,12 @@ class Game {
                 if (type === 'polygon') {
                     const vertices = shape.m_vertices;
                     if (vertices.length) {
-                        buffer.writeInt8(vertices.length, i);
-                        i++;
+                        buffer.writeInt8(vertices.length);
                         for (let vi = 0; vi < vertices.length; ++vi) {
                             const v = vertices[vi];
                             const x = v.x, y = v.y;
-                            buffer.writeFloatBE(x, i);
-                            i+=4;
-                            buffer.writeFloatBE(y, i);
-                            i+=4;
+                            buffer.writeFloat(x);
+                            buffer.writeFloat(y);
                         }
                     }
                 } else {
@@ -119,10 +112,9 @@ class Game {
             }
         }
 
-        const subBuffer = buffer.slice(0, i);
         this.webSockets.forEach((webSocket) => {
             if (webSocket.readyState === WebSocket.OPEN) {
-                webSocket.send(subBuffer)
+                webSocket.send(buffer.subarray())
             }
         });
     }
