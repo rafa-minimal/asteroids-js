@@ -1,38 +1,30 @@
 const cat = require("../shared/constants").cat;
+const NetworkBuffer = require('../shared/NetworkBuffer');
 
 export default function render(ctx, snapshot) {
     if (snapshot === null) {
-        return;
+        return
     }
-    const view = new DataView(snapshot);
+    const view = new NetworkBuffer(snapshot);
     ctx.lineCap = 'round';
     ctx.lineWidth = 0.2;
     ctx.strokeStyle = 'rgba(255,255,255,0.9)';
     ctx.fillStyle = 'rgba(255,255,255,0.9)';
-    let i = 0;
-    const length = view.byteLength;
-    while (i < length) {
-        const type = view.getInt8(i);
-        i++;
-        const x = view.getFloat32(i);
-        i+=4;
-        const y = view.getFloat32(i);
-        i+=4;
-        const angle = view.getFloat32(i);
-        i+=4;
+    while (view.hasMore()) {
+        const type = view.readInt8();
+        const x = view.readFloat();
+        const y = view.readFloat();
+        const angle = view.readFloat();
         ctx.save();
         ctx.translate(x, y);
         ctx.rotate(angle);
         //ctx.fillRect(-0.5, -0.5, 1, 1);
         if (type === cat.asteroid) {
             ctx.beginPath();
-            const length = view.getInt8(i);
-            i++;
+            const length = view.readInt8();
             for (let vi = 0; vi < length; ++vi) {
-                const vx = view.getFloat32(i);
-                i+=4;
-                const vy = view.getFloat32(i);
-                i+=4;
+                const vx = view.readFloat();
+                const vy = view.readFloat();
                 if (vi === 0)
                     ctx.moveTo(vx, vy);
                 else

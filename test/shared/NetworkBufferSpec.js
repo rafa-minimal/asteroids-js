@@ -46,4 +46,19 @@ describe('NetworkBuffer', () => {
         assert.strictEqual(view[0], 16);
         assert.strictEqual(view[5], 255);
     });
+
+    it('should coerce boolean to 0/1', () => {
+        const buffer = new NetworkBuffer(20);
+        buffer.writeUint8(true);
+        buffer.writeUint8(false);
+        buffer.writeInt8(true);
+        buffer.writeInt8(false);
+
+        buffer.reset();
+
+        assert.strictEqual(buffer.readUint8(), 1);
+        assert.strictEqual(buffer.readUint8(), 0);
+        assert.strictEqual(buffer.readInt8(), 1);
+        assert.strictEqual(buffer.readInt8(), 0);
+    });
 });

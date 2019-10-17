@@ -3,11 +3,16 @@ class NetworkBuffer {
     constructor(arrayBufferOrSize) {
         if (arrayBufferOrSize instanceof ArrayBuffer) {
             this.view = new DataView(arrayBufferOrSize);
-        } else {
+        } else if (typeof(arrayBufferOrSize) === 'number') {
             this.view = new DataView(new ArrayBuffer(arrayBufferOrSize));
+        } else if (typeof(arrayBufferOrSize) === 'undefined') {
+            throw 'Missing parameter, expected ArrayBuffer or size, got: undefined'
+        } else {
+            throw 'Invalid parameter, expected ArrayBuffer or size, got: ' + arrayBufferOrSize
         }
 
         this.offset = 0;
+        this.length = this.view.byteLength
     }
 
     flip() {
@@ -16,6 +21,10 @@ class NetworkBuffer {
 
     reset() {
         this.offset = 0;
+    }
+
+    hasMore() {
+        return this.offset < this.length;
     }
 
     subarray() {
