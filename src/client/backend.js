@@ -1,3 +1,5 @@
+const { FrameRate } = require('./common');
+
 // workaround when opening from local file system (file://...)
 let host = window.location.host;
 if (host.length === 0) {
@@ -14,7 +16,8 @@ const state = {
 
 
 let ready = false;
-const buffer = new Uint8Array(4);
+
+let frameRate = new FrameRate();
 
 socket.onclose = event => {
     console.log("console, event:", event)
@@ -23,6 +26,7 @@ socket.onerror = event => {
     console.log("error, event:", event)
 };
 socket.onmessage = event => {
+    frameRate.update();
     state.snapshot = event.data;
 };
 socket.onopen = event => {
@@ -43,3 +47,4 @@ function update(controls) {
 
 module.exports.state = state;
 module.exports.update = update;
+module.exports.updateRate = () => frameRate.fpsAverage.get();

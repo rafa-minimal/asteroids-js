@@ -6,6 +6,8 @@ import renderSnapshot from './SnapshotRenderer.js';
 import backend from './backend.js';
 import input from './input.js';
 
+const { FrameRate } = require('./common.js');
+
 const renderContext = initCanvas(document.getElementById('canvas'));
 
 const camera = new Camera(0, 0, 40);
@@ -17,10 +19,22 @@ function clear(ctx) {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
+const frameRate = new FrameRate();
+
+function printStats(renderContext) {
+    renderContext.setTransform(1, 0, 0, 1, 0, 0);
+    renderContext.font = '10px sans-serif';
+    renderContext.strokeStyle = '#fff';
+    renderContext.fillStyle = '#fff';
+    renderContext.fillText(`fps: ${Math.round(frameRate.fpsAverage.get())}, ups: ${Math.round(backend.updateRate())}`, 0,  renderContext.canvas.height);
+}
+
 function render() {
+    frameRate.update();
     clear(renderContext);
     camera.fit(renderContext);
     renderSnapshot(renderContext, backend.state.snapshot);
+    printStats(renderContext);
     backend.update(input);
     requestAnimationFrame(render);
 }

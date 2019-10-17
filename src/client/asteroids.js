@@ -7,6 +7,8 @@ import input from './input.js';
 import initCanvas from './canvas.js';
 import renderWorld from './WorldRenderer.js';
 
+const { FrameRate } = require('./common.js');
+
 const renderContext = initCanvas(document.getElementById('canvas'));
 
 const engine = new Engine();
@@ -20,43 +22,6 @@ function clear(ctx) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = 'rgba(0,0,0,1)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-}
-
-class MovingAverage {
-    constructor(size) {
-        this.values = [];
-        this.size = size;
-        this.sum = 0;
-    }
-
-    push(value) {
-        while (this.values.length >= this.size) {
-            this.sum -= this.values.pop();
-        }
-        this.sum += value;
-        this.values.push(value);
-    }
-
-    get() {
-        return this.sum / this.values.length
-    }
-}
-
-class FrameRate {
-    constructor() {
-        this.lastUpdateTimeMs = Date.now();
-        this.fpsAverage = new MovingAverage(60);
-        this.rawDeltaTimeMs = 0;
-        this.deltaTimeMs = 0;
-    }
-
-    update() {
-        const nowMs = Date.now();
-        this.rawDeltaTimeMs = nowMs - this.lastUpdateTimeMs;
-        this.deltaTimeMs = Math.min(this.rawDeltaTimeMs, 60);
-        this.fpsAverage.push(1000/this.rawDeltaTimeMs);
-        this.lastUpdateTimeMs = nowMs;
-    }
 }
 
 const frameRate = new FrameRate();
