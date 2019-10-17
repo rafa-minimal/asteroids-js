@@ -27,7 +27,7 @@ function printStats(renderContext) {
     renderContext.font = '10px sans-serif';
     renderContext.strokeStyle = '#fff';
     renderContext.fillStyle = '#fff';
-    renderContext.fillText(`fps: ${Math.round(frameRate.fpsAverage.get())}, ups: ${Math.round(engine.updateRate())}`, 0,  renderContext.canvas.height);
+    renderContext.fillText(`fps: ${Math.round(frameRate.fpsAverage.get())}, ups: ${Math.round(engine.updateRate())}, latency: ${Math.round(engine.latency())}ms`, 0,  renderContext.canvas.height);
 }
 
 function render() {

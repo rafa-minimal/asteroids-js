@@ -7,5 +7,6 @@ exports.cat = {
 
 exports.messageType = {
     update: 0,
-    ping: 1
+    controls: 1,
+    ping: 2
 };

@@ -1,5 +1,6 @@
-const { FrameRate } = require('./common');
+const { FrameRate, MovingAverage } = require('./common');
 const { messageType } = require('../shared/constants');
+const NetworkBuffer = require('../shared/NetworkBuffer');
 
 module.exports = class ClientEngine {
     constructor() {
@@ -16,19 +17,36 @@ module.exports = class ClientEngine {
         this.state = null;
 
         this.frameRate = new FrameRate();
-        this.buffer = new Uint8Array(4);
+        this.latencyAvg = new MovingAverage(10);
+        this.controlsBuffer = new NetworkBuffer(5);
+        this.pingBuffer = new NetworkBuffer(5);
+        this.pingInterval = null;
+        this.refTimestamp = Date.now();
 
         this.socket.onclose = event => {
-            console.log("console, event:", event)
+            console.log("console, event:", event);
+            this.ready = false;
+            if (this.pingInterval) {
+                clearInterval(this.pingInterval);
+                this.pingInterval = null;
+            }
         };
         this.socket.onerror = event => {
             console.log("error, event:", event)
         };
         this.socket.onmessage = event => {
+            const view = new NetworkBuffer(event.data);
             const data = new Int8Array(event.data);
-            if (data[0] === messageType.update) {
+            const type = view.readUint8();
+            if (type === messageType.update) {
                 this.frameRate.update();
                 this.state = event.data;
+            } else if (type === messageType.ping) {
+                console.log("Got ping");
+                const latency = Date.now() - this.refTimestamp - view.readUint32();
+                this.latencyAvg.push(latency);
+            } else {
+                console.log("Unknown message type: ", type);
             }
         };
         this.socket.onopen = event => {
@@ -37,17 +55,17 @@ module.exports = class ClientEngine {
                 this.onready();
             }
         };
-
-        //this.pingInterval = setInterval(this.ping.bind(this), 500);
     }
 
     update(controls) {
         if (this.ready) {
-            this.buffer[0] = controls.left  && 1 || 0;
-            this.buffer[1] = controls.right && 1 || 0;
-            this.buffer[2] = controls.up    && 1 || 0;
-            this.buffer[3] = controls.fire  && 1 || 0;
-            this.socket.send(this.buffer);
+            this.controlsBuffer.reset()
+                .writeUint8(messageType.controls)
+                .writeUint8(controls.left)
+                .writeUint8(controls.right)
+                .writeUint8(controls.up)
+                .writeUint8(controls.fire);
+            this.socket.send(this.controlsBuffer.arrayBuffer);
         }
     }
 
@@ -55,7 +73,21 @@ module.exports = class ClientEngine {
         return this.frameRate.fpsAverage.get();
     }
 
+    latency() {
+        return this.latencyAvg.get();
+    }
+
+    ping() {
+        if (this.ready) {
+            this.pingBuffer.reset()
+                .writeUint8(messageType.ping)
+                .writeUint32(Date.now() - this.refTimestamp);
+            this.socket.send(this.pingBuffer.arrayBuffer)
+        }
+    }
+
     onReady(callback) {
+        this.pingInterval = setInterval(this.ping.bind(this), 500);
         this.onready = callback;
     }
 };

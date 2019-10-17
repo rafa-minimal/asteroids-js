@@ -51,11 +51,19 @@ class Game {
     }
 
     handleInput(webSocket, buffer) {
-        if (this.players[webSocket.id]) {
-            this.players[webSocket.id].input.left  = buffer[0] === 1 && true || false;
-            this.players[webSocket.id].input.right = buffer[1] === 1 && true || false;
-            this.players[webSocket.id].input.up    = buffer[2] === 1 && true || false;
-            this.players[webSocket.id].input.fire  = buffer[3] === 1 && true || false;
+        if (buffer[0] === messageType.controls) {
+            if (this.players[webSocket.id]) {
+                this.players[webSocket.id].input.left  = buffer[1] === 1 && true || false;
+                this.players[webSocket.id].input.right = buffer[2] === 1 && true || false;
+                this.players[webSocket.id].input.up    = buffer[3] === 1 && true || false;
+                this.players[webSocket.id].input.fire  = buffer[4] === 1 && true || false;
+            } else {
+                console.log("Unknown client: ", webSocket)
+            }
+        } else if (buffer[0] === messageType.ping) {
+            webSocket.send(buffer);
+        } else {
+            console.log("Unknown message type: ", Number(buffer[0]));
         }
     }
 
