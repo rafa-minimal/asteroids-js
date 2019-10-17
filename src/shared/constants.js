@@ -5,4 +5,7 @@ exports.cat = {
     edge:     0b01000
 };
 
-
+exports.messageType = {
+    update: 0,
+    ping: 1
+};

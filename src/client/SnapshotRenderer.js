@@ -6,6 +6,8 @@ export default function render(ctx, snapshot) {
         return
     }
     const view = new NetworkBuffer(snapshot);
+    // skip message type
+    view.readInt8();
     ctx.lineCap = 'round';
     ctx.lineWidth = 0.2;
     ctx.strokeStyle = 'rgba(255,255,255,0.9)';

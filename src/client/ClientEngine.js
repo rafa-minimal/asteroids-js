@@ -1,4 +1,5 @@
 const { FrameRate } = require('./common');
+const { messageType } = require('../shared/constants');
 
 module.exports = class ClientEngine {
     constructor() {
@@ -24,8 +25,11 @@ module.exports = class ClientEngine {
             console.log("error, event:", event)
         };
         this.socket.onmessage = event => {
-            this.frameRate.update();
-            this.state = event.data;
+            const data = new Int8Array(event.data);
+            if (data[0] === messageType.update) {
+                this.frameRate.update();
+                this.state = event.data;
+            }
         };
         this.socket.onopen = event => {
             this.ready = true;
@@ -33,6 +37,8 @@ module.exports = class ClientEngine {
                 this.onready();
             }
         };
+
+        //this.pingInterval = setInterval(this.ping.bind(this), 500);
     }
 
     update(controls) {

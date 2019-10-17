@@ -1,7 +1,7 @@
 const Engine = require('../shared/Engine.js');
 const Level = require('./Level.js');
 const WebSocket = require('ws');
-const cat = require("../shared/constants").cat;
+const { cat, messageType } = require("../shared/constants");
 const createRocket = require("../shared/rocket");
 const NetworkBuffer = require("../shared/NetworkBuffer");
 
@@ -77,6 +77,7 @@ class Game {
     sendUpdate() {
         const buffer = this.updateBuffer;
         buffer.reset();
+        buffer.writeInt8(messageType.update);
         for (let b = this.engine.world.getBodyList(); b; b = b.getNext()) {
             if (b.asteroid) {
                 buffer.writeInt8(cat.asteroid);
