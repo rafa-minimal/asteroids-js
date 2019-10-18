@@ -1,6 +1,7 @@
 const { FrameRate, MovingAverage } = require('./common');
 const { messageType } = require('../shared/constants');
 const NetworkBuffer = require('../shared/NetworkBuffer');
+const cat = require("../shared/constants").cat;
 
 module.exports = class ClientEngine {
     constructor() {
@@ -34,20 +35,7 @@ module.exports = class ClientEngine {
         this.socket.onerror = event => {
             console.log("error, event:", event)
         };
-        this.socket.onmessage = event => {
-            const view = new NetworkBuffer(event.data);
-            const data = new Int8Array(event.data);
-            const type = view.readUint8();
-            if (type === messageType.update) {
-                this.frameRate.update();
-                this.state = event.data;
-            } else if (type === messageType.ping) {
-                const latency = Date.now() - this.refTimestamp - view.readUint32();
-                this.latencyAvg.push(latency);
-            } else {
-                console.log("Unknown message type: ", type);
-            }
-        };
+        this.socket.onmessage = this.onMessage.bind(this);
         this.socket.onopen = event => {
             this.ready = true;
             if (this.onready) {
@@ -66,6 +54,47 @@ module.exports = class ClientEngine {
                 .writeUint8(controls.fire);
             this.socket.send(this.controlsBuffer.arrayBuffer);
         }
+    }
+
+    onMessage(event) {
+        const view = new NetworkBuffer(event.data);
+        const type = view.readUint8();
+        if (type === messageType.update) {
+            this.frameRate.update();
+            this.state = this.decodeSnapshot(view);
+        } else if (type === messageType.ping) {
+            const latency = Date.now() - this.refTimestamp - view.readUint32();
+            this.latencyAvg.push(latency);
+        } else {
+            console.log("Unknown message type: ", type);
+        }
+    }
+
+    decodeSnapshot(view) {
+        const state = {
+            timestampMs: view.readUint32(),
+            ents: []
+        };
+        while (view.hasMore()) {
+            const id = view.readUint16();
+            const entity = {
+                type: view.readUint8(),
+                x: view.readFloat(),
+                y: view.readFloat(),
+                angle: view.readFloat()
+            };
+            if (entity.type === cat.asteroid) {
+                const length = view.readInt8();
+                const vertices = [];
+                for (let vi = 0; vi < length; ++vi) {
+                    vertices.push(view.readFloat());
+                    vertices.push(view.readFloat());
+                }
+                entity.vertices = vertices;
+            }
+            state.ents.push(entity);
+        }
+        return state;
     }
 
     updateRate() {
