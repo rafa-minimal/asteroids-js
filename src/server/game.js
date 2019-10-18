@@ -10,6 +10,7 @@ class Game {
     constructor() {
         this.webSockets = [];
         this.players = {};
+        this.gameStartTimeMs = Date.now();
         this.lastUpdateTimeMs = Date.now();
         this.frameNumber = 1;
         this.sendUpdateEvery = 2;
@@ -86,7 +87,7 @@ class Game {
         const buffer = this.updateBuffer;
         buffer.reset();
         buffer.writeInt8(messageType.update);
-        buffer.writeUint32(this.engine.worldTimeMs);
+        buffer.writeUint32(Date.now() - this.gameStartTimeMs);
         for (let b = this.engine.world.getBodyList(); b; b = b.getNext()) {
             if (b.asteroid) {
                 buffer.writeUint16(b.id);
