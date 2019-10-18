@@ -13,10 +13,11 @@ const angularTau = 0.11;
 const maxAngularVel = 4.5;
 
 const nominalAngDamping = 1.0/angularTau;
-var maxTorque = 0;
+let maxTorque = 0;
 
-module.exports = function createRocket(ctx) {
-    const rocket = ctx.world.createDynamicBody({dynamicDamping: DEFAULT_ROCKET_LINEAR_DAMPING});
+module.exports = function createRocket(engine) {
+    const rocket = engine.world.createDynamicBody({dynamicDamping: DEFAULT_ROCKET_LINEAR_DAMPING});
+    rocket.id = engine.newId();
 
     rocket.createFixture(planck.Polygon([
         Vec2(-1, -1),
@@ -44,19 +45,19 @@ module.exports = function createRocket(ctx) {
         let sum = impulse.normalImpulses.reduce((sum, impulse) => (sum || 0) + impulse);
         self.energy -= sum;
         if (self.energy <= 0) {
-            ctx.toDestroy.push(self);
+            engine.toDestroy.push(self);
         }
     };
     rocket.beforeDestroy = (self) => {
-        ctx.rocket = null;
-        const securityCircle = ctx.world.createBody();
+        engine.rocket = null;
+        const securityCircle = engine.world.createBody();
         securityCircle.createFixture(planck.Circle(3), {
             filterCategoryBits: cat.asteroid,
             filterMaskBits: cat.asteroid
         });
         // todo: czas dziwnie szybko upływa
-        ctx.scheduler.schedule(ctx.worldTimeMs + 5000, () => ctx.world.destroyBody(securityCircle));
-        ctx.scheduler.schedule(ctx.worldTimeMs + 5000, () => createRocket(ctx))
+        engine.scheduler.schedule(engine.worldTimeMs + 5000, () => engine.world.destroyBody(securityCircle));
+        engine.scheduler.schedule(engine.worldTimeMs + 5000, () => createRocket(engine))
     };
     rocket.update = (self) => {
         const input = self.input;
@@ -73,14 +74,13 @@ module.exports = function createRocket(ctx) {
             const force = self.getWorldVector(Vec2(0, ROCKET_THRUST));
             self.applyForceToCenter(force, true);
         }
-        if (input.fire && ctx.worldTimeMs >= self.nextBullet) {
+        if (input.fire && engine.worldTimeMs >= self.nextBullet) {
             const pos = self.getWorldPoint(Vec2(0, 1.52));
             const vel = self.getWorldVector(Vec2(0, ROCKET_BULLET_VELOCITY));
-            createBullet(ctx, pos, vel);
-            self.nextBullet = ctx.worldTimeMs + 200
+            createBullet(engine, pos, vel);
+            self.nextBullet = engine.worldTimeMs + 200
         }
     };
     rocket.input = {left: false, right: false, up: false, fire: false};
-    ctx.rocket = rocket;
     return rocket;
 };

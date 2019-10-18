@@ -16,11 +16,11 @@ const ASTEROID_MAX_SPEED = 4.0;
 const ASTEROID_MAX_OMEGA = 2.0;
 
 // asteroid
-module.exports = function createAsteroid(ctx, level, pos, vel) {
-    pos = pos || rndVecRadius(rnd(ctx.worldRadius));
+module.exports = function createAsteroid(engine, level, pos, vel) {
+    pos = pos || rndVecRadius(rnd(engine.worldRadius));
     vel = vel || rndVecRadius(ASTEROID_MAX_SPEED);
 
-    const asteroid = ctx.world.createDynamicBody({
+    const asteroid = engine.world.createDynamicBody({
         position: pos,
         linearVelocity: vel,
         angle: rnd(360),
@@ -28,6 +28,7 @@ module.exports = function createAsteroid(ctx, level, pos, vel) {
         linearDamping: 0.01,
         angularDamping: 0.01
     });
+    asteroid.id = engine.newId();
 
     const len = ASTEROID_NUM_VERTICES[level];
     const radius = ASTEROID_RADIUS[level];
@@ -54,10 +55,10 @@ module.exports = function createAsteroid(ctx, level, pos, vel) {
             let numPieces = ASTEROID_PIECES[self.level];
             let pos = rotateDeg(Vec2(0, r), rnd(360));
             for (let i = 0; i < numPieces; i++) {
-                createAsteroid(ctx, level - 1, self.getPosition().clone().add(pos), self.getLinearVelocity());
+                createAsteroid(engine, level - 1, self.getPosition().clone().add(pos), self.getLinearVelocity());
                 pos = rotateDeg(pos, 360 / numPieces);
             }
         }
     };
     return asteroid;
-}
+};

@@ -36,6 +36,11 @@ module.exports = class Engine {
         this.rocket = null;
         this.worldTimeMs = 0;
 
+        this.freeIds = Array(5000);
+        for (let i = 0; i < this.freeIds.length; i++) {
+            this.freeIds[i] = i;
+        }
+
         this.world.on('begin-contact', (contact) => {
             let bodyA = contact.getFixtureA().getBody();
             let bodyB = contact.getFixtureB().getBody();
@@ -77,12 +82,20 @@ module.exports = class Engine {
             if (ent.beforeDestroy) {
                 ent.beforeDestroy(ent)
             }
-            this.world.destroyBody(ent)
+            this.world.destroyBody(ent);
+            this.freeIds.push(ent.id);
         }
         this.scheduler.update(this.worldTimeMs);
     }
 
     entityCount() {
         return this.world.m_bodyCount;
+    }
+
+    newId() {
+        if (this.freeIds.length === 0) {
+            throw "Run out of ids!"
+        }
+        return this.freeIds.pop();
     }
 };
