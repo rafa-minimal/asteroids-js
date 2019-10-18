@@ -1,8 +1,11 @@
 import createAsteroid from '../shared/asteroid.js';
 import createRocket from '../shared/rocket.js';
 import * as planck from 'planck-js';
-import { rnd } from '../shared/math.js';
-import { cat } from '../shared/constants.js';
+import {rnd} from '../shared/math.js';
+import {cat} from '../shared/constants.js';
+//CommonJS style - działa inaczej niż ES15 style
+//const input = require('./input');
+import input from './input.js';
 
 export default class Level {
     constructor() {
@@ -11,7 +14,7 @@ export default class Level {
 
     init(engine) {
         // rocket
-        createRocket(engine);
+        createRocket(engine, input);
 
         // Create asteroids, init spawn chain
         for (let i = 0; i < 10; i++) {

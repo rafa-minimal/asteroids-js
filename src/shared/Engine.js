@@ -66,8 +66,10 @@ module.exports = class Engine {
 
     update(dtMs) {
         this.worldTimeMs += dtMs;
-        if (this.rocket) {
-            this.rocket.update(this.rocket);
+        for (let body = this.world.getBodyList(); body; body = body.getNext()) {
+            if (body.update) {
+                body.update(body);
+            }
         }
         this.world.step(dtMs / 1000);
 

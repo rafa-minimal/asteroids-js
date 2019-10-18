@@ -15,7 +15,7 @@ const maxAngularVel = 4.5;
 const nominalAngDamping = 1.0/angularTau;
 let maxTorque = 0;
 
-module.exports = function createRocket(engine) {
+module.exports = function createRocket(engine, input) {
     const rocket = engine.world.createDynamicBody({dynamicDamping: DEFAULT_ROCKET_LINEAR_DAMPING});
     rocket.id = engine.newId();
 
@@ -49,15 +49,13 @@ module.exports = function createRocket(engine) {
         }
     };
     rocket.beforeDestroy = (self) => {
-        engine.rocket = null;
         const securityCircle = engine.world.createBody();
         securityCircle.createFixture(planck.Circle(3), {
             filterCategoryBits: cat.asteroid,
             filterMaskBits: cat.asteroid
         });
-        // todo: czas dziwnie szybko upływa
         engine.scheduler.schedule(engine.worldTimeMs + 5000, () => engine.world.destroyBody(securityCircle));
-        engine.scheduler.schedule(engine.worldTimeMs + 5000, () => createRocket(engine))
+        engine.scheduler.schedule(engine.worldTimeMs + 5000, () => createRocket(engine, self.input))
     };
     rocket.update = (self) => {
         const input = self.input;
@@ -81,6 +79,6 @@ module.exports = function createRocket(engine) {
             self.nextBullet = engine.worldTimeMs + 200
         }
     };
-    rocket.input = {left: false, right: false, up: false, fire: false};
+    rocket.input = input || {left: false, right: false, up: false, fire: false};
     return rocket;
 };

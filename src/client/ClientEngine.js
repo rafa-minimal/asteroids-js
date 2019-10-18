@@ -42,7 +42,6 @@ module.exports = class ClientEngine {
                 this.frameRate.update();
                 this.state = event.data;
             } else if (type === messageType.ping) {
-                console.log("Got ping");
                 const latency = Date.now() - this.refTimestamp - view.readUint32();
                 this.latencyAvg.push(latency);
             } else {

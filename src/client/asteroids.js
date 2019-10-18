@@ -3,7 +3,6 @@ import './css/main.css';
 import Engine from '../shared/Engine.js';
 import Camera from './Camera.js';
 import Level from './Level.js';
-import input from './input.js';
 import initCanvas from './canvas.js';
 import renderWorld from './WorldRenderer.js';
 
@@ -36,9 +35,6 @@ function printStats(renderContext) {
 
 function render() {
     frameRate.update();
-    if (engine.rocket) {
-        engine.rocket.input = input;
-    }
     engine.update(frameRate.deltaTimeMs);
     clear(renderContext);
     camera.fit(renderContext);
