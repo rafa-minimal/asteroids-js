@@ -8,11 +8,14 @@ export default function render(ctx, snapshot) {
     const view = new NetworkBuffer(snapshot);
     // skip message type
     view.readInt8();
+    // skip timestamp
+    view.readUint32();
     ctx.lineCap = 'round';
     ctx.lineWidth = 0.2;
     ctx.strokeStyle = 'rgba(255,255,255,0.9)';
     ctx.fillStyle = 'rgba(255,255,255,0.9)';
     while (view.hasMore()) {
+        const id = view.readUint16();
         const type = view.readInt8();
         const x = view.readFloat();
         const y = view.readFloat();

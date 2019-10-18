@@ -86,13 +86,17 @@ class Game {
         const buffer = this.updateBuffer;
         buffer.reset();
         buffer.writeInt8(messageType.update);
+        buffer.writeUint32(this.engine.worldTimeMs);
         for (let b = this.engine.world.getBodyList(); b; b = b.getNext()) {
             if (b.asteroid) {
-                buffer.writeInt8(cat.asteroid);
+                buffer.writeUint16(b.id);
+                buffer.writeUint8(cat.asteroid);
             } else if (b.rocket) {
-                buffer.writeInt8(cat.rocket);
+                buffer.writeUint16(b.id);
+                buffer.writeUint8(cat.rocket);
             } else if (b.bullet) {
-                buffer.writeInt8(cat.bullet);
+                buffer.writeUint16(b.id);
+                buffer.writeUint8(cat.bullet);
             } else {
                 continue;
             }
