@@ -34,7 +34,7 @@ function render() {
     frameRate.update();
     clear(renderContext);
     camera.fit(renderContext);
-    renderSnapshot(renderContext, engine.state);
+    renderSnapshot(renderContext, engine.getState());
     printStats(renderContext);
     engine.update(input);
     requestAnimationFrame(render);
