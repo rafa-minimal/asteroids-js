@@ -7,8 +7,8 @@
     "test": "mocha --recursive",
     "build:single": "webpack --config webpack.single.prod.js",
     "build:multi": "webpack --config webpack.multi.js",
-    "dev-server:single": "webpack-dev-server --config webpack.single.dev.js --open",
-    "dev-server:multi": "webpack-dev-server --config webpack.multi.js --open",
+    "dev-server:single": "webpack-dev-server --config webpack.single.dev.js --open --port 8002",
+    "dev-server:multi": "webpack-dev-server --config webpack.multi.js --open --port 8001",
     "start": "node src/server/server.js"
   },
   "keywords": [],

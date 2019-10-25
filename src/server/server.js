@@ -42,7 +42,7 @@ app.ws('/echo', function(ws, req) {
 
 
 // --
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8000;
 const server = app.listen(port, 'localhost', () => {
     console.log(`Server listening on port ${port}`);
 });
