@@ -80,7 +80,7 @@ module.exports = class ClientEngine {
             this.clientStartTimestampMs = Date.now();
         }
         this.snapshots.push(snapshot);
-        while(this.snapshots.length > 10) {
+        while(this.snapshots.length > 100) {
             this.snapshots.splice(0, 1);
         }
         this.state = snapshot;
@@ -88,16 +88,18 @@ module.exports = class ClientEngine {
 
     simulatedServerTimeMs() {
         if (this.firstTimestampMs === null) {
-            throw "First snapshot not received yet, this.firstTimestampMs === null";
+            return 0;
+            // throw "First snapshot not received yet, this.firstTimestampMs === null";
         }
         return this.firstTimestampMs + (Date.now() - this.clientStartTimestampMs)
     }
 
-    getState(gameTimeMs) {
+    getState() {
+        const gameTimeMs = this.simulatedServerTimeMs() - this.renderDelayMs;
+        console.log(gameTimeMs);
         if (this.snapshots.length === 0) {
             return {timestampMs: gameTimeMs, ents: []}
         }
-        gameTimeMs = gameTimeMs || (this.simulatedServerTimeMs() - this.renderDelayMs);
         if (gameTimeMs <= this.snapshots[0].timestampMs) {
             return this.snapshots[0];
         }

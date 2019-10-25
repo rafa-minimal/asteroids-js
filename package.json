@@ -28,6 +28,7 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
+    "dat.gui": "^0.7.6",
     "express-ws": "^4.0.0",
     "planck-js": "^0.3.10"
   }

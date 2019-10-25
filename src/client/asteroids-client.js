@@ -40,4 +40,9 @@ function render() {
     requestAnimationFrame(render);
 }
 
+const dat = require('dat.gui');
+const gui = new dat.GUI();
+gui.add(engine, 'renderDelayMs', -500, 0);
+// gui.add(engine, 'explode');
+
 engine.onReady(() => requestAnimationFrame(render));
