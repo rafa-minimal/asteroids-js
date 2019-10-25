@@ -20,7 +20,7 @@ module.exports = class Scheduler {
 
     update(worldTimeMs) {
         while(this.scheduledEvents.length > 0 && worldTimeMs >= this.scheduledEvents[0].worldTimeMs) {
-            this.scheduledEvents.pop().action();
+            this.scheduledEvents.splice(0, 1)[0].action();
         }
     }
 };

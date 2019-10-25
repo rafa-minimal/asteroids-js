@@ -54,8 +54,8 @@ module.exports = function createRocket(engine, input) {
             filterCategoryBits: cat.asteroid,
             filterMaskBits: cat.asteroid
         });
-        engine.scheduler.schedule(engine.worldTimeMs + 5000, () => engine.world.destroyBody(securityCircle));
-        engine.scheduler.schedule(engine.worldTimeMs + 5000, () => createRocket(engine, self.input))
+        engine.scheduler.schedule(engine.worldTimeMs + 2000, () => engine.world.destroyBody(securityCircle));
+        engine.scheduler.schedule(engine.worldTimeMs + 2000, () => createRocket(engine, self.input))
     };
     rocket.update = (self) => {
         const input = self.input;
