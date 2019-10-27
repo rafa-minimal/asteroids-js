@@ -5,6 +5,7 @@ import Camera from './Camera.js';
 import Level from './Level.js';
 import initCanvas from './canvas.js';
 import renderWorld from './WorldRenderer.js';
+import input from './input.js';
 
 const { FrameRate } = require('./common.js');
 
@@ -14,7 +15,7 @@ const engine = new Engine();
 const level = new Level();
 const camera = new Camera(0, 0, level.worldRadius * 2);
 
-level.init(engine);
+level.init(engine, input);
 
 function clear(ctx) {
     ctx.setTransform(1, 0, 0, 1, 0, 0);

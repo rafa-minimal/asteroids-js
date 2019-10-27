@@ -25,11 +25,11 @@ function applyEdgeForce(world, worldRadiusSquared) {
 }
 
 module.exports = class Engine {
-    constructor() {
+    constructor(worldRadius) {
         this.world = new planck.World({
             gravity: Vec2(0, 0)
         });
-        this.worldRadius = 20;
+        this.worldRadius = worldRadius || 20;
         this.worldRadiusSquared = this.worldRadius ** 2;
         this.scheduler = new Scheduler();
         this.toDestroy = [];

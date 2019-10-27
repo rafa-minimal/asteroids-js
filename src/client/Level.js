@@ -1,18 +1,15 @@
-import createAsteroid from '../shared/asteroid.js';
-import createRocket from '../shared/rocket.js';
-import * as planck from 'planck-js';
-import {rnd} from '../shared/math.js';
-import {cat} from '../shared/constants.js';
-//CommonJS style - działa inaczej niż ES15 style
-//const input = require('./input');
-import input from './input.js';
+const createAsteroid = require('../shared/asteroid.js');
+const createRocket = require('../shared/rocket.js');
+const planck = require ('planck-js');
+const {rnd} = require('../shared/math.js');
+const {cat} = require('../shared/constants.js');
 
-export default class Level {
+module.exports = class Level {
     constructor() {
         this.worldRadius = 20
     }
 
-    init(engine) {
+    init(engine, input) {
         // rocket
         createRocket(engine, input);
 
@@ -38,4 +35,4 @@ export default class Level {
             filterMaskBits: cat.rocket | cat.asteroid
         });
     }
-}
+};
