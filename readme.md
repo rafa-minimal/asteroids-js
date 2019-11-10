@@ -14,7 +14,7 @@ Then open `./dist/single/index.html`
 ```bash
 npm dev-server:single
 ```
-Should auto open `localhost:8080` in browser.
+Should auto open `localhost:8000` in browser.
 Hot Module Replacement is on (single.html change will not trigger HMR).
 
 # Multi mode
@@ -28,9 +28,9 @@ npm run build:multi
 ```bash
 npm dev-server:multi
 ```
-Should auto open `localhost:8080` in browser.
+Should auto open `localhost:8000` in browser.
 
-Proxies WebSocket connections to backend at ws://localhost:8080/echo (need to run backend to work).
+Proxies WebSocket connections to backend at ws://localhost:8000/echo (need to run backend to work).
 
 Hot Module Replacement is on (asteroids.html change will not trigger HMR).
 
@@ -40,5 +40,5 @@ npm run start
 ```
 
 * Serves client `/dist` at `/`
-* WebSocket at ws://localhost:8080/echo
+* WebSocket at ws://localhost:8000/echo
 * server side Hot Moudle Replacement is on

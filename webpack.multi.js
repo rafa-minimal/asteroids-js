@@ -16,7 +16,7 @@ module.exports = {
         overlay: {errors: true, warnings: true},
         proxy: {
             '/echo': {
-                target: 'ws://localhost:8080',
+                target: 'ws://localhost:8000',
                 ws: true,
             },
         },

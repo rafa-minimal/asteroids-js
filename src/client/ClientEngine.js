@@ -8,7 +8,7 @@ module.exports = class ClientEngine {
         // workaround when opening from local file system (file://...)
         let host = window.location.host;
         if (host.length === 0) {
-            host = 'localhost:8080'
+            host = 'localhost:8000'
         }
 
         this.socket = new WebSocket("ws://" + host + "/echo");
