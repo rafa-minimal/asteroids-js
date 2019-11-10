@@ -4,7 +4,7 @@
   "description": "",
   "private": true,
   "scripts": {
-    "test": "mocha --recursive",
+    "test": "mocha --recursive test/**/*.spec.js",
     "build:single": "webpack --config webpack.single.prod.js",
     "build:multi": "webpack --config webpack.multi.js",
     "dev-server:single": "webpack-dev-server --config webpack.single.dev.js --open --port 8002",
