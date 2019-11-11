@@ -42,3 +42,26 @@ npm run start
 * Serves client `/dist` at `/`
 * WebSocket at ws://localhost:8000/echo
 * server side Hot Moudle Replacement is on
+
+# Simulated latency (toxiproxy)
+
+```
+docker-compose up
+```
+
+Navigate to `http://localhost:8010`
+
+* toxiproxy is proxying tcp `localhost:8010` to `docker.for.win.localhost:8000`
+* toxiproxy control endpoint: `localhost:8474`
+
+## Add latency of 300 ms, 100 ms jitter (both directions)
+```
+curl -X POST localhost:8474/proxies/asteroids/toxics --data '{"type": "latency", "stream":"downstream", "attributes": {"latency": 300, "jitter": 100}}'
+curl -X POST localhost:8474/proxies/asteroids/toxics --data '{"type": "latency", "stream":"upstream", "attributes": {"latency": 300, "jitter": 100}}'
+```
+
+## Update latency
+```
+curl -X POST localhost:8474/proxies/asteroids/toxics/latency_downstream --data '{"attributes": {"latency": 50, "jitter": 10}}'
+curl -X POST localhost:8474/proxies/asteroids/toxics/latency_upstream --data '{"attributes": {"latency": 50, "jitter": 10}}'
+```

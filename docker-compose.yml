@@ -1,0 +1,12 @@
+version: '3.0'
+services:
+  toxiproxy:
+    image: shopify/toxiproxy
+    container_name: toxiproxy
+    volumes:
+      - ./toxiproxy:/toxiproxy
+    ports:
+      - 8474:8474
+      - 8010:8010
+    command: ["-config", "/toxiproxy/toxiproxy.json", "-host", "0.0.0.0"]
+    
