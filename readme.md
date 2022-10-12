@@ -12,7 +12,7 @@ Then open `./dist/single/index.html`
 
 # Dev server
 ```bash
-npm dev-server:single
+npm run dev-server:single
 ```
 Should auto open `localhost:8000` in browser.
 Hot Module Replacement is on (single.html change will not trigger HMR).
